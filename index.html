@@ -39,17 +39,66 @@
       statusChangeCallback(response);        // Returns the login status.
     });
   };
- 
+  
   function testAPI() {                      // Testing Graph API after login.  See statusChangeCallback() for when this call is made.
+    let page_id = "";
     console.log('Welcome!  Fetching your information.... ');
     FB.api('/me', function(response) {
       console.log('Successful login for: ' + response.name);
       document.getElementById('status').innerHTML =
-        'Thanks for logging in, ' + response.name + '!';
+      'Thanks for logging in, ' + response.name + '!';
+      // storeRes(response);
     });
-
-
+    
+    FB.api(
+      '/me',
+      'GET',
+      {"fields":"id,name,accounts"},
+      function(response) {
+          // Insert your code here
+          // console.log(response);
+          // Access token
+          // console.log(response.accounts.data[0].access_token);
+          // Page id?
+          console.log(response.accounts.data[0].id);
+          page_id = response.accounts.data[0].id;
+          // console.log(page_id);
+          storePageID(response.accounts.data[0].id);
+      }
+    );
   }
+
+  function storePageID(res) {
+    const data = res;
+    console.log('RES');
+    console.log(data);
+    getIGMetrics(data);
+  }
+
+  function getIGMetrics(page_id){
+    FB.api(
+      '/' + page_id,
+      'GET',
+      {"fields":"id,name"},
+      function(response) {
+        console.log("IG Metrics");
+        console.log(response);
+      }
+    )
+  }
+
+  // async function getData() {
+  //   const response = await FB.api('/me', function(response) {
+  //       return response;
+  //     });
+  // }
+
+  // async function renderData() {
+  //   const data = await getData();
+  //   console.log("ME");
+  //   console.log({data});
+  // }
+
 
 </script>
 
@@ -58,6 +107,9 @@
 <h1>you are on correct page</h1>
 <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
 </fb:login-button>
+<!-- <button onclick="renderData();">HERE</button> -->
+
+
 
 <div id="status">
 </div>
