@@ -69,23 +69,47 @@
   }
 
   function storePageID(res) {
-    const data = res;
+    const fb_user_id = res;
     console.log('RES');
-    console.log(data);
-    getIGMetrics(data);
+    console.log(fb_user_id);
+    getInstaBusID(fb_user_id);
   }
 
-  function getIGMetrics(page_id){
+  function getInstaBusID(fb_user_id){
     FB.api(
-      '/' + page_id,
+      '/' + fb_user_id,
       'GET',
-      {"fields":"id,name"},
+      {"fields":"id,name,instagram_business_account"},
       function(response) {
         console.log("IG Metrics");
         console.log(response);
+        console.log(response.instagram_business_account.id);
+        storeInstaBusID(response.instagram_business_account.id);
       }
     )
   }
+
+  function storeInstaBusID(insta_bus_acc_id){
+    const ig_bus_id = insta_bus_acc_id;
+    console.log("IGID");
+    console.log(ig_bus_id);
+    getInstaMetrics(ig_bus_id);
+  }
+
+  function getInstaMetrics(ig_bus_id){
+    FB.api(
+      '/' + ig_bus_id, 
+      'GET',
+      {"fields":"ig_id, follows_count,followers_count, media{like_count}"},
+      function(response) {
+        console.log("IG Metrics");
+        console.log(response);
+        console.log(response.instagram_business_account.id);
+        storeInstaBusID(response.instagram_business_account.id);
+      }
+    )
+  }
+
 
   // async function getData() {
   //   const response = await FB.api('/me', function(response) {
