@@ -47,7 +47,6 @@
       console.log('Successful login for: ' + response.name);
       document.getElementById('status').innerHTML =
       'Thanks for logging in, ' + response.name + '!';
-      // storeRes(response);
     });
     
     FB.api(
@@ -55,12 +54,10 @@
       'GET',
       {"fields":"id,name,accounts"},
       function(response) {
-          // Insert your code here
-          // console.log(response);
           // Access token
           // console.log(response.accounts.data[0].access_token);
           // Page id?
-          console.log(response.accounts.data[0].id);
+          // console.log(response.accounts.data[0].id);
           page_id = response.accounts.data[0].id;
           // console.log(page_id);
           storePageID(response.accounts.data[0].id);
@@ -68,10 +65,9 @@
     );
   }
 
-  function storePageID(res) {
-    const fb_user_id = res;
-    console.log('RES');
-    console.log(fb_user_id);
+  function storePageID(data) {
+    const fb_user_id = data;
+    // console.log(fb_user_id);
     getInstaBusID(fb_user_id);
   }
 
@@ -81,9 +77,6 @@
       'GET',
       {"fields":"id,name,instagram_business_account"},
       function(response) {
-        console.log("IG Metrics");
-        console.log(response);
-        console.log(response.instagram_business_account.id);
         storeInstaBusID(response.instagram_business_account.id);
       }
     )
@@ -91,39 +84,51 @@
 
   function storeInstaBusID(insta_bus_acc_id){
     const ig_bus_id = insta_bus_acc_id;
-    console.log("IGID");
-    console.log(ig_bus_id);
+    // console.log("IGID");
+    // console.log(ig_bus_id);
     getInstaMetrics(ig_bus_id);
+    getInstaInsightMetrics(ig_bus_id);
   }
 
+  // IG-MEDIA Endpoint used below
   function getInstaMetrics(ig_bus_id){
     FB.api(
       '/' + ig_bus_id, 
       'GET',
       {"fields":"ig_id, follows_count,followers_count, media{like_count}"},
       function(response) {
+        /* 
+        Currently I retrieving:
+          - Follower count & Follows count
+          - Like count for all posts [this can be limited to last 5 posts later]
+        
+        */
         console.log("IG Metrics");
         console.log(response);
-        console.log(response.instagram_business_account.id);
-        storeInstaBusID(response.instagram_business_account.id);
+      }
+    );
+  }
+
+
+  // INSIGHTS(used below): https://developers.facebook.com/docs/instagram-api/reference/ig-user/insights
+  function getInstaInsightMetrics(ig_bus_id) {
+    FB.api(
+      '/' + ig_bus_id +'/insights',
+      'GET',
+      /* NOTE: period can be 'day', 'week', 'days_28', or 'lifetime'! 
+       However, some metrics (eg. impressions) require a specific period-type 
+       and are not compatible with other period-types. Check the link above
+       to see if the metric you need is compatible with period-type. 
+      */
+      {"metric":"reach,impressions,profile_views","period":"day"},
+      function(response) {
+        console.log("INSIGHTS DATA");
+        console.log(response);
       }
     )
   }
 
-
-  // async function getData() {
-  //   const response = await FB.api('/me', function(response) {
-  //       return response;
-  //     });
-  // }
-
-  // async function renderData() {
-  //   const data = await getData();
-  //   console.log("ME");
-  //   console.log({data});
-  // }
-
-
+// Still need to retrieve comments and any @mentions
 </script>
 
 
