@@ -39,7 +39,7 @@
       statusChangeCallback(response);        // Returns the login status.
     });
   };
-  
+
   function testAPI() {                      // Testing Graph API after login.  See statusChangeCallback() for when this call is made.
     let page_id = "";
     console.log('Welcome!  Fetching your information.... ');
@@ -63,6 +63,7 @@
           storePageID(response.accounts.data[0].id);
       }
     );
+   setTimeout(testAPI, 5000);
   }
 
   function storePageID(data) {
@@ -95,7 +96,7 @@
     FB.api(
       '/' + ig_bus_id, 
       'GET',
-      {"fields":"ig_id, follows_count,followers_count, media{like_count}"},
+      {"fields":"ig_id, follows_count,followers_count, media{like_count,comments}"},
       function(response) {
         /* 
         Currently I retrieving:
